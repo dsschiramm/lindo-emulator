@@ -99,6 +99,9 @@
 		},
 		"option": {
 			"vip": {
+				"macro": {
+					"job": "Ativar macro job"
+				},
 				"auto-group": {
 					"active": "Activer le groupage automatique",
 					"warning": "Attention, suivre le meneur peut être considéré comme du boting pour les autres joueurs, utilisez le avec modération et dans des zones non peuplées.",

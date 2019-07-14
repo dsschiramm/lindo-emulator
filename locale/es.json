@@ -97,6 +97,9 @@
 		},
 		"option": {
 			"vip": {
+				"macro": {
+					"job": "Ativar macro job"
+				},
 				"auto-group": {
 					"header": "Grupo",
 					"active": "Habilitar agrupación automática",

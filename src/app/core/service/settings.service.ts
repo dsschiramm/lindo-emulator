@@ -647,6 +647,7 @@ export module Option {
 			private _hidden_mount: boolean;
 			private _party_info_pp: boolean;
 			private _party_info_lvl: boolean;
+			private _macro_job: boolean;
 
 			get party_info_pp(): boolean {
 				return this._party_info_pp;
@@ -664,6 +665,15 @@ export module Option {
 			set party_info_lvl(party_info_lvl: boolean) {
 				this.settingsProvider.write('option.vip.general.party_info_lvl', party_info_lvl);
 				this._party_info_lvl = party_info_lvl;
+			}
+
+			get macro_job(): boolean {
+				return this._macro_job;
+			}
+
+			set macro_job(macro_job: boolean) {
+				this.settingsProvider.write('option.vip.general.macro_job', macro_job);
+				this._macro_job = macro_job;
 			}
 
 			get hidden_mount(): boolean {
@@ -719,6 +729,7 @@ export module Option {
 				this.hidden_mount = this.settingsProvider.read('option.vip.general.hidden_mount');
 				this.party_info_pp = this.settingsProvider.read('option.vip.general.party_info_pp');
 				this.party_info_lvl = this.settingsProvider.read('option.vip.general.party_info_lvl');
+				this.macro_job = this.settingsProvider.read('option.vip.general.macro_job');
 			}
 		}
 

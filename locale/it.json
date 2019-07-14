@@ -99,6 +99,9 @@
 		},
 		"option": {
 			"vip": {
+				"macro": {
+					"job": "Ativar macro job"
+				},
 				"auto-group": {
 					"header": "Gruppo",
 					"active": "Abilita creazione gruppo automatica",

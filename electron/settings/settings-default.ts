@@ -152,7 +152,8 @@ export const SettingsDefault: SettingsInterface = {
 				estimator: true,
 				hidden_mount: false,
 				party_info_pp: false,
-				party_info_lvl: false
+				party_info_lvl: false,
+				macro_job: false
 			},
 			auto_group: {
 				active: false,

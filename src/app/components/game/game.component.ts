@@ -24,6 +24,7 @@ import { KeyboardInput } from "app/core/mods/keyboard-input/keyboard-input";
 import { HttpClient } from '@angular/common/http';
 import { HideMount } from "app/core/mods/hide-mount/hide-mount";
 import { PartyInfo } from "app/core/mods/party-info/party-info";
+import { MacroJob } from 'app/core/mods/macro-job/macro-job';
 
 
 @Component({
@@ -54,7 +55,8 @@ export class GameComponent implements AfterViewInit {
     private hideShop: HideShop;
     private keyboardInput: KeyboardInput;
     private hideMount: HideMount;
-	private partyInfo:PartyInfo;
+	private partyInfo: PartyInfo;
+	private macroJob: MacroJob;
 
     constructor(
         private windowService: WindowService,
@@ -135,6 +137,7 @@ export class GameComponent implements AfterViewInit {
                 if (this.keyboardInput) this.keyboardInput.reset();
                 if (this.hideMount) this.hideMount.reset();
 				if (this.partyInfo) this.partyInfo.reset();
+				if (this.macroJob) this.macroJob.reset();
         }
     }
 
@@ -178,6 +181,7 @@ export class GameComponent implements AfterViewInit {
                 //this.wizAssets = new WizAssetsContainer(this.game.window, this.applicationService, this.http, this.settingsService.option.general);
                 this.keyboardInput = new KeyboardInput(this.game.window);
 				this.partyInfo = new PartyInfo(this.game.window, this.settingsService.option.vip.general.party_info_pp, this.settingsService.option.vip.general.party_info_lvl, this.translate);
+				this.macroJob = new MacroJob(this.game.window, this.settingsService.option.vip.general.macro_job);
         }
     }
 
