@@ -5,6 +5,7 @@ export class MacroJob extends Mods {
 
 	private interativePath: any = [];
 	private mapId: number = null;
+	private mapNotChange: boolean = false;
 	private jobPath = [];
 
 	constructor(
@@ -18,24 +19,29 @@ export class MacroJob extends Mods {
 			let onGameMapMovementMessage = (msg: any) => {
 
 				if (!this.mapId || this.mapId != this.wGame.isoEngine.mapRenderer.mapId) {
-					Logger.info(' - MUDANCA MAP : ', this.wGame.isoEngine.mapRenderer.mapId);
 					this.getInterativePath();
+				} else if (this.mapNotChange) {
+					this.updateInterativePath();
 				}
 			};
 
 			let onInteractiveUseEndedMessage = (msg: any) => {
-				Logger.info(' - JOB EXECUTADO ');
 				this.interativeWIthPath();
 			};
 
 			let onInteractiveElementUpdatedMessage = (msg: any) => {
-				Logger.info(' - VALIDAR PATH ');
 				this.updateInterativePath();
+			};
+
+			let onGameFightTurnStartMessage = (msg: any) => {
+				Logger.info('-- FIGHT - ', msg);
+				this.turnStart();
 			};
 
 			this.on(this.wGame.dofus.connectionManager, 'InteractiveUseEndedMessage', onInteractiveUseEndedMessage);
 			this.on(this.wGame.dofus.connectionManager, 'InteractiveElementUpdatedMessage', onInteractiveElementUpdatedMessage);
 			this.on(this.wGame.dofus.connectionManager, 'GameMapMovementMessage', onGameMapMovementMessage);
+			this.on(this.wGame.dofus.connectionManager, 'GameFightTurnStartMessage', onGameFightTurnStartMessage);
 
 			// GameMapChangeOrientationRequestMessage
 			// InteractiveUseRequestMessage
@@ -44,6 +50,7 @@ export class MacroJob extends Mods {
 			// this.wGame.dofus.sendMessage("PartyAcceptInvitationMessage", { partyId: partyId });
 			// this.wGame.dofus.sendMessage("GameFightJoinRequestMessage", { fightId, fighterId });
 			// useInteractiveByCellId
+			// Logger.info(' - mainCharacter : ', this.wGame.gui.playerData.characters.mainCharacter);
 		}
 	}
 
@@ -70,7 +77,12 @@ export class MacroJob extends Mods {
 
 			if (!exist.length) {
 
-				interactiveList[id].enabledSkills.filter(data => data._name == 'Cortar' && data._parentJobName == 'Lenhador').forEach(element => {
+				interactiveList[id].enabledSkills.filter(data => (data._name == 'Cortar' && data._parentJobName == 'Lenhador') || (data._name == 'Coletar' && data._parentJobName == 'Minerador')).forEach(element => {
+
+					if (!this.mapNotChange && element._parentJobName == 'Minerador' && element._name == 'Coletar') {
+						this.mapNotChange = true;
+					}
+
 					this.interativePath.push({ elemId: elemId, skillInstanceUid: element.skillInstanceUid });
 				});
 			}
@@ -79,6 +91,7 @@ export class MacroJob extends Mods {
 
 	private getInterativePath () {
 
+		this.mapNotChange = false;
 		this.interativePath = [];
 		this.mapId = this.wGame.isoEngine.mapRenderer.mapId;
 
@@ -102,7 +115,7 @@ export class MacroJob extends Mods {
 
 				if (!exist) {
 					exist = (interactiveList[id].elementId == this.interativePath[index].elemId &&
-						interactiveList[id].enabledSkills.filter(data => data._name == 'Cortar' && data._parentJobName == 'Lenhador').length);
+						interactiveList[id].enabledSkills.filter(data => (data._name == 'Cortar' && data._parentJobName == 'Lenhador') || (data._name == 'Coletar' && data._parentJobName == 'Minerador')).length);
 				}
 			}
 
@@ -115,6 +128,65 @@ export class MacroJob extends Mods {
 			this.interativeWIthPath();
 		} else if (this.interativePath.length === 0) {
 			// this.wGame.dofus.sendMessage("ChangeMapMessage", { mapId: partyId });
+		}
+	}
+
+	public turnStart () {
+
+		try {
+
+			let fighters = this.wGame.gui.fightManager.getFighters();
+
+			Logger.info('-- FIGHT ================================================ ');
+			Logger.info('-- fighters - ', fighters);
+			Logger.info('-- FIGHT ================================================ ');
+
+			let fighterId = null;
+
+			for (let index in fighters) {
+
+				let fighterC = this.wGame.gui.fightManager.getFighter(fighters[index]);
+				if (fighterC.data.alive && fighterC.id !== this.wGame.gui.playerData.characters.mainCharacterId) {
+					fighterId = fighterC.id
+				}
+			}
+
+			if (fighterId) {
+
+				Logger.info('-- FIGHT ================================================ ');
+				Logger.info('-- fighterId - ', fighterId);
+				Logger.info('-- FIGHT ================================================ ');
+
+				let fighter = this.wGame.gui.fightManager.getFighter(fighterId.id);
+
+				Logger.info('-- FIGHT ================================================ ');
+				Logger.info('-- fighter - ', fighter);
+				Logger.info('-- FIGHT ================================================ ');
+
+				if (this.wGame.isoEngine.mapRenderer.isFightMode) {
+
+					if (fighter.data.alive) {
+
+						let cellId = fighter.data.disposition.cellId;
+
+						Logger.info('-- cellId ================================================ ');
+						Logger.info('-- cellId - ', cellId);
+						Logger.info('-- cellId ================================================ ');
+
+						Logger.info('-- fighter.buffs ================================================ ');
+						Logger.info('-- fighter.buffs - ', fighter.buffs);
+						Logger.info('-- fighter.buffs ================================================ ');
+
+						Logger.info('-- fighter.spells ================================================ ');
+						Logger.info('-- fighter.spells - ', this.wGame.gui.playerData.characters.mainCharacter.spellData.spells);
+						Logger.info('-- fighter.spells ================================================ ');
+
+					}
+				}
+			}
+		} catch(e) {
+			Logger.info('-- FIGHT ERRROR ================================================ ');
+			Logger.info('-- FIGHT ERRROR ================================================ ');
 		}
 	}
 
