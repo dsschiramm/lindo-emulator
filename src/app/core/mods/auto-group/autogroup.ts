@@ -65,13 +65,13 @@ export class AutoGroup extends Mods {
 
 					let idInt = setInterval(() => {
 						this.masterParty(this.params.members.split(';'));
-					}, this.getRandomTime(5, 7));
+					}, this.getRandomTime(13, 15));
 
 					this.addOnResetListener(() => {
 						clearInterval(idInt);
 					});
 				}
-			}, this.getRandomTime(2, 3));
+			}, this.getRandomTime(13, 15));
 		} catch (e) {
 			Logger.info(e);
 		}
@@ -119,15 +119,23 @@ export class AutoGroup extends Mods {
 		let partyMembers = this.getPartyMembers();
 		nameList.forEach((name) => {
 			if (!partyMembers.includes(name)) {
+
 				this.wGame.dofus.sendMessage('BasicWhoIsRequestMessage', {
 					search: name,
 					verbose: true
 				});
 
-				this.once(this.wGame.dofus.connectionManager, 'BasicWhoIsMessage', (msg: any) => {
-					//si perso pas dans le groupe
+				let onBasicWhoIsMessage = (msg: any) => {
+
 					if (msg.playerState == 1) {
 						this.inviteToParty(name);
+					}
+				};
+
+				this.on(this.wGame.dofus.connectionManager, 'BasicWhoIsMessage', (msg: any) => {
+
+					if (msg.playerName == name) {
+						this.wGame.dofus.connectionManager.removeListener("BasicWhoIsMessage", onBasicWhoIsMessage(msg));
 					}
 				});
 			}
