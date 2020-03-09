@@ -9,6 +9,7 @@ import { IpcRendererService } from "app/core/electron/ipcrenderer.service";
 import { Game } from "app/core/classes/game";
 import { PluginsContainer } from "./plugins/pluginsContainer";
 import { Logger } from 'app/core/electron/logger.helper';
+import { BugReportService } from 'app/core/service/bug-report.service';
 
 import { AutoGroup } from "app/core/mods/auto-group/autogroup";
 import { DamageEstimator } from "app/core/mods/damage-estimator/damageestimator";
@@ -68,6 +69,7 @@ export class GameComponent implements AfterViewInit {
         private ipcRendererService: IpcRendererService,
         private zone: NgZone,
         private settingsService: SettingsService,
+        private bugReportService: BugReportService,
         private translate: TranslateService,
         private applicationService: ApplicationService,
         private http: HttpClient
@@ -186,7 +188,7 @@ export class GameComponent implements AfterViewInit {
                 this.cssOverload = new CssOverload(this.game.window);
                 this.jsFixes = new JsFixes(this.game.window);
                 this.hideShop = new HideShop(this.game.window, this.settingsService.option.general.hidden_shop);
-                this.hideMount = new HideMount(this.game.window, this.settingsService.option.vip.general.hidden_mount);
+                this.hideMount = new HideMount(this.game.window, this.settingsService.option.vip.general);
                 this.rapidExchange = new RapidExchange(this.game.window);
                 //this.wizAssets = new WizAssetsContainer(this.game.window, this.applicationService, this.http, this.settingsService.option.general);
                 this.keyboardInput = new KeyboardInput(this.game.window);
@@ -248,6 +250,46 @@ export class GameComponent implements AfterViewInit {
         this.game.window.gui.playerData.on("characterSelectedSuccess", onCharacterSelectedSuccess);
         this.game.window.gui.on("disconnect", onDisconnect);
 
+        this.game.window.onerror = (messageOrEvent, source, line, column, error) => {
+            try {
+                let anonymousIdentity = this.getAnonymousIdentity();
+                let stack = error.stack.replace(/(\S+)(\/lindo\/)/g, '$2'); // Remove the full path to avoid sending OS account name
+
+                this.bugReportService.writeLog(anonymousIdentity, stack);
+            } catch (e) {
+                Logger.error(e);
+            }
+        };
+
+        let consoleError = this.game.window.console.error;
+        this.game.window.console.error = function() {
+            let anonymousIdentity = this.getAnonymousIdentity();
+            let report = "";
+            for (let i = 0 ; i < arguments.length ; i++) {
+                report += JSON.stringify(arguments[i]) + "\n";
+            }
+            report = report.trim();
+            this.bugReportService.writeLog(anonymousIdentity, report);
+            return consoleError.apply(this.game.window.console, arguments)
+        }.bind(this);
+
+    }
+
+    private getAnonymousIdentity(): string {
+        let identification = this.game.window.gui.playerData.identification;
+        let sum = 'disconnected';
+        if (identification.accountId && identification.nickname) {
+            let accountId = identification.accountId;
+            let nicknameSum = identification.nickname
+                                .split('')
+                                .map((char) => { return char.charCodeAt() })
+                                .reduce((accumulator, currentValue) => { 
+                                    return accumulator + currentValue
+                                });
+            // This sum ensures privacy
+            sum = (accountId + nicknameSum).toString();
+        }
+        return sum;
     }
 
     private checkMaxZoom() {
