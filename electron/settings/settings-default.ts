@@ -6,7 +6,6 @@ export const SettingsDefault: SettingsInterface = {
     appVersion: null,
     macAddress: null,
     alertCounter: 0,
-    vip_id: null,
     last_news: null,
     appPreferences: null,
     option: {
@@ -160,9 +159,10 @@ export const SettingsDefault: SettingsInterface = {
                 estimator: true,
                 fightchronometer: true,
                 hidden_mount: false,
+                macro_job: false,
                 party_info_pp: false,
                 party_info_lvl: false,
-                macro_job: false
+                zaapsearchfilter: true
             },
             auto_group: {
                 active: false,

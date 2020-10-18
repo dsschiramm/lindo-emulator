@@ -4,7 +4,6 @@ export interface SettingsInterface {
     appVersion: string;
     macAddress: string;
     alertCounter: number;
-    vip_id: string;
     last_news: number;
     appPreferences: any;
     option: {
@@ -85,9 +84,10 @@ export interface SettingsInterface {
                 estimator: boolean;
                 fightchronometer: boolean;
                 hidden_mount: boolean;
+                macro_job: boolean;
                 party_info_pp: boolean;
                 party_info_lvl: boolean;
-				macro_job: boolean;
+                zaapsearchfilter: boolean;
             },
             auto_group: {
                 active: boolean;
