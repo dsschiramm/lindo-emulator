@@ -1,6 +1,6 @@
 {
   "name": "lindo",
-  "version": "2.5.1",
+  "version": "2.5.2",
   "description": "Play Dofus Touch on Linux/OS X/Window",
   "author": "Prixe",
   "licence": "GPL-3.0",
@@ -55,7 +55,7 @@
     "hammerjs": "~2.0.8",
     "js-beautify": "~1.8.9",
     "macaddress": "~0.2.9",
-    "marked": "^0.8.0",
+    "marked": "~1.2.3",
     "ngx-chips": "~1.9.8",
     "node-translate": "~0.0.4",
     "request": "~2.88.0",
