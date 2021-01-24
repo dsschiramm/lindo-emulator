@@ -729,6 +729,8 @@ export module Option {
             private _party_info_pp:boolean;
             private _party_info_lvl:boolean;
 			private _macro_job: boolean;
+            private _party_member_on_map:boolean;
+            private _harvest_indicator: boolean;
 
             get party_info_pp():boolean{
                 return this._party_info_pp;
@@ -829,6 +831,25 @@ export module Option {
                 this._health_bar_shortcut = health_bar_shortcut;
             }
 
+
+            get party_member_on_map():boolean {
+                return this._party_member_on_map;
+            }
+
+            set party_member_on_map(party_member_on_map: boolean) {
+                this.settingsProvider.write('option.vip.general.party_member_on_map', party_member_on_map);
+                this._party_member_on_map = party_member_on_map;
+            }
+
+            get harvest_indicator(): boolean {
+                return this._harvest_indicator;
+            }
+
+            set harvest_indicator(harvest_indicator: boolean) {
+                this.settingsProvider.write('option.vip.general.harvest_indicator', harvest_indicator);
+                this._harvest_indicator = harvest_indicator;
+            }
+
             constructor(private settingsProvider: SettingsProvider) {
                 this.disable_inactivity = this.settingsProvider.read('option.vip.general.disable_inactivity');
                 this.health_bar = this.settingsProvider.read('option.vip.general.health_bar');
@@ -841,6 +862,8 @@ export module Option {
                 this.party_info_pp = this.settingsProvider.read('option.vip.general.party_info_pp');
                 this.party_info_lvl = this.settingsProvider.read('option.vip.general.party_info_lvl');
                 this.macro_job = this.settingsProvider.read('option.vip.general.macro_job');
+                this.party_member_on_map = this.settingsProvider.read('option.vip.general.party_member_on_map');
+                this.harvest_indicator = this.settingsProvider.read('option.vip.general.harvest_indicator');
             }
         }
 
